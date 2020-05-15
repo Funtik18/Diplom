@@ -13,7 +13,7 @@ public class ReferenceContainer : Container{
 	}
 
 	public void Prepare() {
-		//InventoryOverseer._instance.containers.Add(this);
+		InventoryOverseer._instance.containers.Add(this);
 		reference = GetComponent<AlphaItem>();
 
 		ReferenceItem refItem = ScriptableObject.CreateInstance(typeof(ReferenceItem)) as ReferenceItem;
@@ -21,8 +21,8 @@ public class ReferenceContainer : Container{
 
 		refItem.type = TypeItem.Reference;
 		refItem.sprite = Resources.Load<Sprite>("Textures/GUI/Directions/None");
-		//refItem.container = transform.parent.GetChild(1).GetComponent<Container>();
-		//refItem.name = "ref " + refItem.container;
+		refItem.container = transform.parent.GetChild(1).GetComponent<Container>();
+		refItem.name = "ref " + refItem.container;
 		reference.Item = refItem;
 
 		SubscribeItemEvents(reference);
@@ -38,7 +38,6 @@ public class ReferenceContainer : Container{
 		bufferItem.transform.position = eventData.pointerCurrentRaycast.worldPosition;
 		bufferItem.Item = reference.Item;
 	}
-	
 	protected override void EndDrag(BasicItem _item, PointerEventData _eventData) {
 		if(!iCanDrag) return;
 
@@ -47,6 +46,7 @@ public class ReferenceContainer : Container{
 		isDrag = false;
 	}
 	protected override void onBeginDrag(BasicItem _item, PointerEventData _eventData) { }
+	
 	protected override void OnPointerClick(BasicItem _item, PointerEventData _eventData) {}
 	public override void OnPointerExit(PointerEventData eventData) {}
 

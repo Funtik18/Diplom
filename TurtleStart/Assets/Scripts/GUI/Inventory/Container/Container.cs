@@ -231,12 +231,14 @@ public class Container : MonoBehaviour, IAllEvents {
 		return true;
 	}
 
+
 	protected void HightLightOff() {
 		for(int i = 0; i < slots.Count; i++) {//убираем подсветки у всех слотовs
 			slots[i].SetActiveRightHover(false);
 			slots[i].SetActiveLeftHover(false);
 		}
 	}
+
 	private void ShiftAllFrom(int _index) {//сдвиг всех предметов от индекса на 1
 		_index++;
 		DisposeContainer();

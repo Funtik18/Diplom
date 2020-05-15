@@ -21,8 +21,8 @@ public class Item : ScriptableObject {
 [CreateAssetMenu(fileName = "NewRefItem", menuName = "RefItem", order = 0)]
 [System.Serializable]
 public class ReferenceItem : Item {
-	//[HideInInspector]
-	//public Container container;
+	[HideInInspector]
+	public Container container;
 
 	/*[Header("Колличество предметов")]
 	[Range(1, 64, order = 0)]

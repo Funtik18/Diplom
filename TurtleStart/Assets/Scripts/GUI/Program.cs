@@ -19,7 +19,7 @@ public class Program : MonoBehaviour{
 		closeBtn.onClick.AddListener(delegate {
 			body.DisposeAll();
 			Disable(false);
-			//OpenCloseFunction._instance.DeleteDisableFunctions();
+			OpenCloseFunction._instance.DeleteDisableFunctions();
 		});
 	}
 

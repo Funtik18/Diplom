@@ -18,6 +18,7 @@ public class InventoryOverseer : MonoBehaviour{
 		_instance = this;
 	}
 
+
 	public bool Verify() {
 		return from == to ? true : false;
 	}

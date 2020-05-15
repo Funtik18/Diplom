@@ -2,76 +2,62 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlyCamera : MonoBehaviour
-{
-	/*
-	wasd : basic movement
-	shift : Makes camera accelerate
-	space : Moves camera on X and Z axis only.So camera doesn't gain any height*/
+public class FlyCamera : MonoBehaviour {
+	// Присваиваем переменные
+	public float mouseSensitivity = 3f;
+	public float speed = 5f;
+	private Vector3 transfer;
+	public float minimumX = -360f;
+	public float maximumX = 360f;
+	public float minimumY = -60f;
+	public float maximumY = 60f;
+	float rotationX = 0f;
+	float rotationY = 0f;
+	Quaternion originalRotation;
 
-	float mainSpeed = 100.0f; //regular speed
-	float shiftAdd = 250.0f; //multiplied by how long shift is held.  Basically running
-	float maxShift = 1000.0f; //Maximum speed when holdin gshift
-	float camSens = 0.25f; //How sensitive it with mouse
-	private Vector3 lastMouse = new Vector3(255, 255, 255); //kind of in the middle of the screen, rather than at the top (play)
-	private float totalRun = 1.0f;
+	void Awake() {
+		Camera.main.orthographic = false;
+		Cursor.visible = false;
+	}
 
-	private void Awake() {
-		//Cursor.visible = false;
+	void Start() {
+		originalRotation = transform.rotation;
 	}
 
 	void Update() {
-		if(Input.GetMouseButton(1)) {
-			lastMouse = Input.mousePosition - lastMouse;
-			lastMouse = new Vector3(-lastMouse.y * camSens, lastMouse.x * camSens, 0);
-			lastMouse = new Vector3(transform.eulerAngles.x + lastMouse.x, transform.eulerAngles.y + lastMouse.y, 0);
-			transform.eulerAngles = lastMouse;
-			lastMouse = Input.mousePosition;
-			//Mouse  camera angle done.  
+		if (Input.GetMouseButton(1)) {
+			// Движения мыши -> Вращение камеры
+			rotationX += Input.GetAxis("Mouse X") * mouseSensitivity;
+			rotationY += Input.GetAxis("Mouse Y") * mouseSensitivity;
+			rotationX = ClampAngle(rotationX, minimumX, maximumX);
+			rotationY = ClampAngle(rotationY, minimumY, maximumY);
+			Quaternion xQuaternion = Quaternion.AngleAxis(rotationX, Vector3.up);
+			Quaternion yQuaternion = Quaternion.AngleAxis(rotationY, Vector3.left);
+			transform.rotation = originalRotation * xQuaternion * yQuaternion;
 		}
+		// Ускорение при нажатии клавиши Shift
+		if (Input.GetKeyDown(KeyCode.LeftShift))
+			speed *= 10;
+		else if (Input.GetKeyUp(KeyCode.LeftShift))
+			speed /= 10;
 
+		// Поднятие и опускание камеры
+		Vector3 newPos = new Vector3(0, 1, 0);
+		if (Input.GetKey(KeyCode.E))
+			transform.position += newPos * speed * Time.deltaTime;
+		else if (Input.GetKey(KeyCode.Q))
+			transform.position -= newPos * speed * Time.deltaTime;
 
-		//Keyboard commands
-		//float f = 0.0f;
-		Vector3 p = GetBaseInput();
-		if(Input.GetKey(KeyCode.LeftShift)) {
-			totalRun += Time.deltaTime;
-			p = p * totalRun * shiftAdd;
-			p.x = Mathf.Clamp(p.x, -maxShift, maxShift);
-			p.y = Mathf.Clamp(p.y, -maxShift, maxShift);
-			p.z = Mathf.Clamp(p.z, -maxShift, maxShift);
-		} else {
-			totalRun = Mathf.Clamp(totalRun * 0.5f, 1f, 1000f);
-			p = p * mainSpeed;
-		}
-
-		p = p * Time.deltaTime;
-		Vector3 newPosition = transform.position;
-		if(Input.GetKey(KeyCode.Space)) { //If player wants to move on X and Z axis only
-			transform.Translate(p);
-			newPosition.x = transform.position.x;
-			newPosition.z = transform.position.z;
-			transform.position = newPosition;
-		} else {
-			transform.Translate(p);
-		}
-
+		// перемещение камеры
+		transfer = transform.forward * Input.GetAxis("Vertical");
+		transfer += transform.right * Input.GetAxis("Horizontal");
+		transform.position += transfer * speed * Time.deltaTime;
 	}
 
-	private Vector3 GetBaseInput() { //returns the basic values, if it's 0 than it's not active.
-		Vector3 p_Velocity = new Vector3();
-		if(Input.GetKey(KeyCode.W)) {
-			p_Velocity += new Vector3(0, 0, 1);
-		}
-		if(Input.GetKey(KeyCode.S)) {
-			p_Velocity += new Vector3(0, 0, -1);
-		}
-		if(Input.GetKey(KeyCode.A)) {
-			p_Velocity += new Vector3(-1, 0, 0);
-		}
-		if(Input.GetKey(KeyCode.D)) {
-			p_Velocity += new Vector3(1, 0, 0);
-		}
-		return p_Velocity;
-	}
+
+	public static float ClampAngle( float angle, float min, float max ) {
+		if (angle < -360F) angle += 360F;
+		if (angle > 360F) angle -= 360F;
+		return Mathf.Clamp(angle, min, max);
+	} 
 }

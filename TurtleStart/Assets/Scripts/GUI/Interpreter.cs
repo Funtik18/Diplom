@@ -16,7 +16,7 @@ public class Interpreter : MonoBehaviour {
 
 	public float timerHighLight;
 
-	public int deepRecursion = 20;
+	private int deepRecursion = 100;//max ~4500
 
 	private void Awake() {
 		_instance = this;
@@ -28,7 +28,8 @@ public class Interpreter : MonoBehaviour {
 	}
 	void UndestandingProgram(List<Item> _functs, List<BasicSlot> _slots, int _level) {
 		if(_level > deepRecursion) {
-			AddError("StackOverflow so many calls");
+			Debug.Log("Error");
+			//AddError("StackOverflow so many calls");
 			return;
 		}
 		for(int i = 0; i < _functs.Count; i++) {
@@ -36,10 +37,10 @@ public class Interpreter : MonoBehaviour {
 			if(_functs[i].type == TypeItem.Reference) {
 				
 				ReferenceItem refItem = _functs[i] as ReferenceItem;
-				//List<Item> innerItems = refItem.container.GetItems();
-				//List<BasicSlot> innerSlots = refItem.container.GetSlots();
+				List<Item> innerItems = refItem.container.GetItems();
+				List<BasicSlot> innerSlots = refItem.container.GetSlots();
 
-				//UndestandingProgram(innerItems, innerSlots, _level +1);
+				UndestandingProgram(innerItems, innerSlots, _level +1);
 
 			}
 			
@@ -50,7 +51,7 @@ public class Interpreter : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// 
+	/// ReadAssignments
 	/// </summary>
 	Coroutine readAssignments;
 	public bool isReadAssignments { get { return readAssignments != null; } }
@@ -68,13 +69,14 @@ public class Interpreter : MonoBehaviour {
 	IEnumerator ReadAssignments() {
 		for(int i = 0; i < items.Count; i++) {
 			Item item = items[i];
-			slots[i].CurrentImageHover.gameObject.SetActive(true);
+			slots[i].SetActiveHoverItem(true);
+			lastSlot = slots[i];
 			yield return new WaitForSeconds(timerHighLight);
 			if(item.type != TypeItem.Reference)
 				yield return StartCoroutine(Analyst(item));
 
-			slots[i].CurrentImageHover.gameObject.SetActive(false);
-
+			slots[i].SetActiveHoverItem(false);
+			lastSlot = null;
 		}
 		StopReadAssignments();
 	}
@@ -84,17 +86,21 @@ public class Interpreter : MonoBehaviour {
 		}
 		readAssignments = null;
 		Restart();
+		
 	}
 	public void RestartReadAssignments() {
 		StopReadAssignments();
 		StartReadAssignments();
 	}
-
+	private BasicSlot lastSlot = null;
+	public void CheckLastSlot() {
+		if (lastSlot != null) lastSlot.SetActiveHoverItem(false);
+	}
 	void Restart() {
-		//ButtonMainState._instance.MakeUpToRestart();//btn make Restart
+		ButtonMainState._instance.MakeUpToRestart();//btn make Restart
 	}
 	void Stop() {
-		//ButtonMainState._instance.MakeUpToStop();//btn make Stop
+		ButtonMainState._instance.MakeUpToStop();//btn make Stop
 	}
 
 
