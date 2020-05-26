@@ -6,7 +6,7 @@ using UnityEngine;
 public class Player : MonoBehaviour{
 
 	public static Player _instance;
-
+	
 	HexPoint currentPoint;
 
 	private void Awake() {
@@ -15,11 +15,17 @@ public class Player : MonoBehaviour{
 
 	public void SetPosition(Cell _newPos) {
 		if(_newPos == null) return;
+		string temp = _newPos.GetComponent<Renderer>().sharedMaterial.name;
+
+		if (SaveLoadManager.taboo.Contains(temp)) return;
+
+
 		transform.localPosition = _newPos.transform.localPosition + new Vector3(0, 5, 0);
 		currentPoint = _newPos.coordinates;
 
 		CheckWin();//должно происходить если закончился корутин
 	}
+
 	public void GoTo(HexPoint _point) {
 		
 		for(int i = 0; i < MapConstants.height; i++) {
@@ -31,6 +37,7 @@ public class Player : MonoBehaviour{
 			}
 		}
 	}
+
 	public void UpLeft() {
 		HexPoint newPoint = new HexPoint(currentPoint.x - 1, currentPoint.z + 1);
 		GoTo(newPoint);
@@ -62,9 +69,12 @@ public class Player : MonoBehaviour{
 
 	public void CheckWin() {
 		if(currentPoint.x == MapConstants.endPosition.x && currentPoint.z == MapConstants.endPosition.y) {
-			print("WIN");
+			MainStateButton._instance.State = 2;
+			WindowManager._instance.ShowWinWindow();
 		}
 	}
+
+	
 
 	public bool IsCellExist(HexPoint _point) {
 		for(int i = 0; i < MapConstants.height; i++) {

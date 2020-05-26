@@ -6,7 +6,13 @@ public class InventoryOverseer : MonoBehaviour{
 
 	public static InventoryOverseer _instance;
 	[HideInInspector]
-	public List<Container> containers = new List<Container>();
+	public List<Container> allContainers = new List<Container>();
+	[HideInInspector]
+	public List<Container> programmingContainers = new List<Container>();
+	[HideInInspector]
+	public List<Container> refContainers = new List<Container>();
+	[HideInInspector]
+	public List<Container> storageContainers = new List<Container>();
 
 	[Tooltip("Откуда брать, куда ложить")] public Container take, put; // от куда брать и куда ложить
 
@@ -17,14 +23,16 @@ public class InventoryOverseer : MonoBehaviour{
 	private void OnEnable() {
 		_instance = this;
 	}
-
+	private void Update() {
+		Debug.Log(programmingContainers.Count);
+	}
 
 	public bool Verify() {
 		return from == to ? true : false;
 	}
 
 	public bool IsContains(Container _container) {
-		return containers.Contains(_container);
+		return allContainers.Contains(_container);
 	}
 
 	public bool VerumPut(Container _container) {//если контэйнер который надо ложить
@@ -48,8 +56,8 @@ public class InventoryOverseer : MonoBehaviour{
 		from = null;
 		to = null;
 	}
-	public void DisposeContainers() {
-		foreach(var container in containers) {
+	public void DisposeContainers() {/////////////
+		foreach(var container in allContainers) {
 			if(container == take) continue;
 			container.DisposeAll();
 		}

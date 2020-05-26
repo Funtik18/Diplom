@@ -7,6 +7,10 @@ public class ProgrammingContainer : Container{
 	BasicSlot hoverSlot;
 
 	int width = 5;////////////////
+	protected override void Start() {
+		base.Start();
+		InventoryOverseer._instance.programmingContainers.Add(this);
+	}
 
 	protected override void PointerEnter(BasicItem _item, PointerEventData _eventData) {	
 		if(isDrag) {
@@ -52,6 +56,7 @@ public class ProgrammingContainer : Container{
 		if(!_item.IsEmpty()) {//если слот не пуст то удаляем объект и нормализуем контэйнер
 			_item.Dispose();
 			NormalizedContainer();
+			//InventoryOverseer._instance.put = this;
 		}
 	}
 }

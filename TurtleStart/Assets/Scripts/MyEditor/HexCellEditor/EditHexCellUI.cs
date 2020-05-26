@@ -14,6 +14,9 @@ public class EditHexCellUI : Editor {
 	EditHexCellEditor myScript;
 	SerializedObject obj;
 
+	SerializedProperty startPos;
+	SerializedProperty endPos;
+
 	List<GameObject> selectedObjs;
 
 	Material[] materials;
@@ -37,15 +40,21 @@ public class EditHexCellUI : Editor {
 
 		obj = new SerializedObject(target);
 
+		startPos = obj.FindProperty("startPosition");
+		endPos = obj.FindProperty("endPosition");
 
-		materials = Resources.LoadAll<Material>("Materials/LevelMaterials");
+
+		materials = Resources.LoadAll<Material>(SaveLoadManager.LevelMaterials);
 		materialsList = new string[materials.Length];
 		for(int i = 0; i < materials.Length; i++) {
 			materialsList[i] = materials[i].name;
 		}
 
 	}
-
+	private void RefreshParams( Vector2Int start, Vector2Int end ) {
+		startPos.vector2IntValue = start;
+		endPos.vector2IntValue = end;
+	}
 	public override void OnInspectorGUI() {
 		selectedObjs = GetSelectedCells();
 
@@ -55,7 +64,9 @@ public class EditHexCellUI : Editor {
 		EditorGUI.BeginChangeCheck();
 		GUILayout.BeginHorizontal();
 
-		GUILayout.Label("Start Position on " + MapConstants.startPosition.ToString());
+		RefreshParams(MapConstants.startPosition, MapConstants.endPosition);
+		#region Select
+		GUILayout.Label("Start Position on " + startPos.vector2IntValue.ToString());
 		if(GUILayout.Button("Select")) {
 			GameObject[] cells = new GameObject[1];
 			cells[0] = MapConstants.startCell.gameObject;
@@ -63,19 +74,24 @@ public class EditHexCellUI : Editor {
 		}
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();
-		GUILayout.Label("End Position on " + MapConstants.endPosition.ToString());
+		GUILayout.Label("End Position on " + endPos.vector2IntValue.ToString());
 		if(GUILayout.Button("Select")) {
 			GameObject[] cells = new GameObject[1];
 			cells[0] = MapConstants.endCell.gameObject;
 			Selection.objects = cells;
 		}
 		GUILayout.EndHorizontal();
-		#region Select
+		
 		GUILayout.Label("Selected Cells: " + selectedObjs.Count);
 		GUILayout.BeginHorizontal();//select all square left right etc
-		int height = MapConstants.cells.GetLength(0);
-		int width = MapConstants.cells.GetLength(1);
-		if(GUILayout.Button("All")) {//ALL
+		int height = 10, width = 10;
+		try {
+			height = MapConstants.cells.GetLength(0);
+			width = MapConstants.cells.GetLength(1);
+		}catch(Exception e) {
+			Debug.Log(e.Message);
+		}
+		if (GUILayout.Button("All")) {//ALL
 			GameObject[] cells = new GameObject[MapConstants.height * MapConstants.width];
 			int g = 0;
 			for(int i = 0; i < height; i++) {
@@ -192,21 +208,23 @@ public class EditHexCellUI : Editor {
 				borderSize--;
 		}
 		GUILayout.EndVertical();
-
-		/*if(tempborderSize != borderSize) {
-			GameObject[] cells = new GameObject[( MapConstants.height * MapConstants.width )];
-			int g = 0;
-			for(int i = 0; i < height; i++) {
-				for(int j = 0; j < width; j++) {
-					if(i == borderSize - 1 || i == height - borderSize || j == borderSize - 1 || j == width - borderSize) {
-						cells[g] = MapConstants.cells[i, j].gameObject;
-						g++;
+		try {
+			if (tempborderSize != borderSize) {
+				GameObject[] cells = new GameObject[( MapConstants.height * MapConstants.width )];
+				int g = 0;
+				for (int i = 0; i < height; i++) {
+					for (int j = 0; j < width; j++) {
+						if (i == borderSize - 1 || i == height - borderSize || j == borderSize - 1 || j == width - borderSize) {
+							cells[g] = MapConstants.cells[i, j].gameObject;
+							g++;
+						}
 					}
 				}
+				Selection.objects = cells;
 			}
-			Selection.objects = cells;
-		}*/
-
+		}catch(Exception e) {
+			Debug.Log(e.Message);
+		}
 		GUILayout.EndHorizontal();
 
 		GUILayout.Space(20f);
@@ -240,7 +258,7 @@ public class EditHexCellUI : Editor {
 			for(int i = 0; i < selectedObjs.Count; i++) {
 				Vector3 oldscale = selectedObjs[i].transform.localScale;
 				Vector3 oldpos = selectedObjs[i].transform.position;
-				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z + 100);
+				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z + 10);
 				selectedObjs[i].transform.position = new Vector3(oldpos.x, oldpos.y + 5, oldpos.z);
 			}
 		}
@@ -249,7 +267,7 @@ public class EditHexCellUI : Editor {
 				Vector3 oldscale = selectedObjs[i].transform.localScale;
 				Vector3 oldpos = selectedObjs[i].transform.position;
 				if(oldscale.z == 10) oldscale.z -= 20;
-				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z - 100);
+				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z - 10);
 				selectedObjs[i].transform.position = new Vector3(oldpos.x, oldpos.y - 5, oldpos.z);
 			}
 		}
@@ -263,7 +281,11 @@ public class EditHexCellUI : Editor {
 		}
 		GUILayout.EndHorizontal();
 		if(GUILayout.Button("Road")) {
-			for(int i = 0; i < selectedObjs.Count; i++) {//down
+			for (int i = 0; i < selectedObjs.Count; i++) {
+				Vector3 oldpos = selectedObjs[i].transform.position;
+				selectedObjs[i].transform.position = new Vector3(oldpos.x, -1, oldpos.z);
+			}
+			/*for(int i = 0; i < selectedObjs.Count; i++) {//down
 				Vector3 oldpos = selectedObjs[i].transform.position;
 				selectedObjs[i].transform.position = new Vector3(oldpos.x, oldpos.y - 10, oldpos.z);
 			}
@@ -271,21 +293,21 @@ public class EditHexCellUI : Editor {
 				Vector3 oldscale = selectedObjs[i].transform.localScale;
 				Vector3 oldpos = selectedObjs[i].transform.position;
 				if(oldscale.z == 10) oldscale.z -= 20;
-				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z - 100);
+				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z - 10);
 				selectedObjs[i].transform.position = new Vector3(oldpos.x, oldpos.y - 5, oldpos.z);
 			}
 			for(int i = 0; i < selectedObjs.Count; i++) {//up s
 				Vector3 oldscale = selectedObjs[i].transform.localScale;
 				Vector3 oldpos = selectedObjs[i].transform.position;
-				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z + 100);
+				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z + 10);
 				selectedObjs[i].transform.position = new Vector3(oldpos.x, oldpos.y + 5, oldpos.z);
 			}
 			for(int i = 0; i < selectedObjs.Count; i++) {//up s
 				Vector3 oldscale = selectedObjs[i].transform.localScale;
 				Vector3 oldpos = selectedObjs[i].transform.position;
-				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z + 100);
+				selectedObjs[i].transform.localScale = new Vector3(oldscale.x, oldscale.y, oldscale.z + 10);
 				selectedObjs[i].transform.position = new Vector3(oldpos.x, oldpos.y + 5, oldpos.z);
-			}
+			}*/
 		}
 		GUILayout.BeginHorizontal();
 		GUILayout.Label("X: ");
@@ -402,7 +424,7 @@ public class EditHexCellUI : Editor {
 		GUILayout.EndVertical();
 	}
 
-	List<GameObject> GetSelectedCells() {
+	private List<GameObject> GetSelectedCells() {
 		List<GameObject> selectedObjs = new List<GameObject>();
 		try {
 			foreach(GameObject obj in Selection.objects) {
@@ -415,8 +437,7 @@ public class EditHexCellUI : Editor {
 		}
 		return selectedObjs;
 	}
-
-	void ChangeMaterial() {
+	private void ChangeMaterial() {
 		if(selectedMaterial == null) return;
 		for(int i = 0; i < selectedObjs.Count; i++) {
 			selectedObjs[i].GetComponent<Renderer>().sharedMaterial = selectedMaterial;

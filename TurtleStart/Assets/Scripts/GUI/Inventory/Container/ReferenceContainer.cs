@@ -9,11 +9,11 @@ public class ReferenceContainer : Container{
 	AlphaItem reference;
 
 	protected override void Start() {
+		InventoryOverseer._instance.refContainers.Add(this);
 		Prepare();
 	}
 
 	public void Prepare() {
-		InventoryOverseer._instance.containers.Add(this);
 		reference = GetComponent<AlphaItem>();
 
 		ReferenceItem refItem = ScriptableObject.CreateInstance(typeof(ReferenceItem)) as ReferenceItem;

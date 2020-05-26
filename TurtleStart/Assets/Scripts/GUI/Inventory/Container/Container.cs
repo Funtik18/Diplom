@@ -5,27 +5,30 @@ using UnityEngine.EventSystems;
 
 public class Container : MonoBehaviour, IAllEvents {
 
-	[Tooltip("Стартовые предметы")] [SerializeField] private List<Item> startItems = new List<Item>();
+	[Tooltip("Стартовые предметы")] [SerializeField] public List<Item> startItems = new List<Item>();
 	protected List<Item> items = new List<Item>();
 	protected List<BasicSlot> slots = new List<BasicSlot>();
 
 	protected virtual void OnEnable() {
-		foreach(Transform child in transform) {
+		
+	}
+	protected virtual void Awake() {
+
+	}
+	protected virtual void Start() {
+		foreach (Transform child in transform) {
 			BasicSlot slot = child.GetComponent<BasicSlot>();
 			slots.Add(slot);
 		}
 		FindBuffer();
-	}
-	protected virtual void Awake() {
-		
-	}
-	protected virtual void Start() {
-		InventoryOverseer._instance.containers.Add(this);
+		InventoryOverseer._instance.allContainers.Add(this);
 		Setup(slots);
 
 		foreach(Item item in startItems) {//заполнение предметами
 			AddItem(item);
 		}
+
+		
 	}
 	void Setup(List<BasicSlot> _slots) {
 		foreach(BasicSlot slot in _slots) {
@@ -214,7 +217,7 @@ public class Container : MonoBehaviour, IAllEvents {
 	#endregion
 
 
-	protected bool isFull() {
+	public bool isFull() {
 		List<BasicSlot> containerSlots = GetSlots();
 		for(int i = 0; i < containerSlots.Count; i++) {
 			if(containerSlots[i].IsEmpty())
@@ -222,7 +225,7 @@ public class Container : MonoBehaviour, IAllEvents {
 		}
 		return true;
 	}
-	protected bool isEmpty() {
+	public bool isEmpty() {
 		List<BasicSlot> containerSlots = GetSlots();
 		for(int i = 0; i < containerSlots.Count; i++) {
 			if(!containerSlots[i].IsEmpty())
