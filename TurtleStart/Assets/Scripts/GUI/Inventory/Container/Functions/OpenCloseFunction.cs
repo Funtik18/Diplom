@@ -9,33 +9,28 @@ public class OpenCloseFunction : MonoBehaviour {
 
 	public Transform content;
 	public Program prefabProgram;
-
-	private Button addBtn;
+	public Button addBtn;
 
 	private void OnEnable() {
 
 		_instance = this;
-
-		addBtn = content.GetChild(0).GetComponentInChildren<Button>();
+		
+		if(!addBtn)
+			addBtn = content.GetChild(0).GetComponentInChildren<Button>();
 
 		addBtn.onClick.AddListener(delegate { AddFunction(); });
 	}
 
 	private void AddFunction() {
-
-		//transform.parent.parent.GetChild(1).gameObject.GetComponent<Scrollbar>().value = 1;
 		Program newProgram = Instantiate<Program>(prefabProgram);
-
 		newProgram.transform.SetParent(content, false);
-
-		//transform.parent.parent.GetChild(1).gameObject.GetComponent<Scrollbar>().value = 1;
 	}
-	public void DeleteDisableFunctions() {
+	public void DeleteDisabledFunctions() {//пропускаем первые два объкта
 		int count = content.childCount;
 		for(int i = 2; i < count; i++) {
-			Transform temp = content.GetChild(i);
-			if(!temp.gameObject.activeSelf) {
-				Destroy(temp.gameObject);
+			GameObject obj = content.GetChild(i).gameObject;
+			if (!obj.activeSelf) {
+				HelpFunctions.DestroyObject(obj);
 			}
 		}
 	}

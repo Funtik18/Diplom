@@ -13,7 +13,7 @@ public class ReferenceContainer : Container{
 		Prepare();
 	}
 
-	public void Prepare() {
+	private void Prepare() {
 		reference = GetComponent<AlphaItem>();
 
 		ReferenceItem refItem = ScriptableObject.CreateInstance(typeof(ReferenceItem)) as ReferenceItem;
@@ -45,7 +45,6 @@ public class ReferenceContainer : Container{
 
 		isDrag = false;
 	}
-	protected override void onBeginDrag(BasicItem _item, PointerEventData _eventData) { }
 	
 	protected override void OnPointerClick(BasicItem _item, PointerEventData _eventData) {}
 	public override void OnPointerExit(PointerEventData eventData) {}

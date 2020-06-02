@@ -28,7 +28,10 @@ public class BasicItem : MonoBehaviour, IPointerEvents, IDragEvents {
 		}
 	}
 
-
+	/// <summary>
+	/// Сheck the item for emptiness
+	/// </summary>
+	/// <returns>True if is empty</returns>
 	public virtual bool IsEmpty() {
 		if(this.CurrentImage.color.a == 0) {
 			Dispose();
@@ -95,5 +98,4 @@ public class BasicItem : MonoBehaviour, IPointerEvents, IDragEvents {
 		if(OnEndDragEvent != null)
 			OnEndDragEvent(this, eventData);
 	}
-
 }

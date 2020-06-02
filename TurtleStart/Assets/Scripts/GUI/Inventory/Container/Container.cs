@@ -7,7 +7,7 @@ public class Container : MonoBehaviour, IAllEvents {
 
 	[Tooltip("Стартовые предметы")] [SerializeField] public List<Item> startItems = new List<Item>();
 	protected List<Item> items = new List<Item>();
-	protected List<BasicSlot> slots = new List<BasicSlot>();
+	public List<BasicSlot> slots = new List<BasicSlot>();
 
 	protected virtual void OnEnable() {
 		
@@ -43,15 +43,22 @@ public class Container : MonoBehaviour, IAllEvents {
 		}
 	}
 
-	public void AddItem(Item _newItem) {
-		
-		foreach(BasicSlot slot in slots) {
-			if(slot.IsEmpty()) {
-				slot.currentItem.Item = _newItem;
+	public void AddItem(Item _newItem) {	
+		for(int i = 0; i < slots.Count; i++) {
+			if(slots[i].IsEmpty()) {
+				slots[i].currentItem.Item = _newItem;
 				items.Add(_newItem);
 				break;
 			}
 		}
+	}
+	public void AddItems(List<Item> _newItems) {
+		for(int i = 0; i < _newItems.Count; i++) {
+			AddItem(_newItems[i]);
+		}
+	}
+	public void RemoveItem( Item _item ) {
+		items.Remove(_item);
 	}
 
 	public List<Item> GetItems() {
@@ -105,7 +112,8 @@ public class Container : MonoBehaviour, IAllEvents {
 	protected static bool isDrag = false;
 	protected bool iCanDrag = false;
 
-	protected int indexWhereToThrow = -1;
+	protected int indexThrow = -1;
+	private int indexTake = -1;
 
 	protected BasicItem bufferItem;
 	protected RectTransform bufferRectTranform;
@@ -146,16 +154,20 @@ public class Container : MonoBehaviour, IAllEvents {
 			return Rect.MinMaxRect(topLeft.x, topLeft.y, bottomRight.x, bottomRight.y);
 		}
 		*/
-
+		//container
 	protected virtual void PointerEnter(BasicItem _item, PointerEventData _eventData) {
-		
 	}
-	protected virtual void PointerExit(BasicItem _item, PointerEventData _eventData) {}
+	protected virtual void PointerExit(BasicItem _item, PointerEventData _eventData) {
+	}
 
-	protected virtual void OnPointerDown(BasicItem _item, PointerEventData _eventData) {}
-	protected virtual void OnPointerUp(BasicItem _item, PointerEventData _eventData) {}
-	protected virtual void OnPointerClick(BasicItem _item, PointerEventData _eventData) {}
-
+	protected virtual void OnPointerDown(BasicItem _item, PointerEventData _eventData) {
+	}
+	protected virtual void OnPointerUp(BasicItem _item, PointerEventData _eventData) {
+	}
+	protected virtual void OnPointerClick(BasicItem _item, PointerEventData _eventData) {
+	}
+	
+	//items slots
 	protected virtual void onBeginDrag(BasicItem _item, PointerEventData _eventData) {
 		draggableItem = _item;
 		//я не могу перетаскивать объекты которых нету
@@ -164,57 +176,85 @@ public class Container : MonoBehaviour, IAllEvents {
 		if(!iCanDrag) return;
 		isDrag = true;
 
-		SetCanvasGroup(draggableItem.canvasGroup, 0.6f, false);
 
 		bufferItem.transform.position = _eventData.pointerCurrentRaycast.worldPosition;
 		bufferItem.Item = draggableItem.Item;
 
+		indexTake = slots.FindIndex(x => x.currentItem == draggableItem);
+
+		RemoveItem(draggableItem.Item);
+		draggableItem.Dispose();
+
+		NormalizedContainerBySlots();
+
+
 		InventoryOverseer._instance.from = this;//от куда взял
 
 	}
-	private void Drag(BasicItem _item, PointerEventData _eventData) {
-		if(!iCanDrag) return;
+	protected virtual void Drag(BasicItem _item, PointerEventData _eventData) {
+		if (!iCanDrag) return;
 		bufferRectTranform.anchoredPosition += _eventData.delta;
 	}
-	private void OnDrop(BasicSlot _slot, PointerEventData _eventData) {//слот дроп
-		if(bufferItem.IsEmpty()) return;
+	private void OnDrop(BasicSlot _slot, PointerEventData _eventData) {//нельзя переобределять, тк функция OnDrop должна быть на каждом слоте
+		if (bufferItem.IsEmpty()) return;
 		InventoryOverseer._instance.to = this;//куда положил
-
-		if(!InventoryOverseer._instance.Verify() && !InventoryOverseer._instance.VerumTake(this)) {//если перетащили в другой контейнер то добавили
-			if(indexWhereToThrow != -1 && !isEmpty()) {
-				ShiftAllFrom(indexWhereToThrow);//что бы всё время не добавлять в конец
+		Container to = this;
+		if (!InventoryOverseer._instance.Verify() && !InventoryOverseer._instance.VerumTake(to)) {//если перетащили в другой контейнер то добавили	
+			if (indexThrow != -1) {//если хотим добваить
+				if(!to.isFull())
+					if (to.slots[indexThrow].IsEmpty())
+						to.AddItem(bufferItem.Item);//добавляем в конец
+					else
+						to.InsertItemTo(bufferItem.Item);
+			} else {
+				print("+");
 			}
-			AddItem(bufferItem.Item);
-		}
+		} else 
+			return;
+		
 		isDrag = false;
 
 		HightLightOff();
-		NormalizedContainer();
 	}
 	protected virtual void EndDrag(BasicItem _item, PointerEventData _eventData) {
 		if(!iCanDrag) return;
+		InventoryOverseer._instance.to = this;//куда положил
 		
-		SetCanvasGroup(_item.canvasGroup, 1f, true);
-
-		 if(InventoryOverseer._instance.Verify()) {//если этот контейнер тот же от куда взяли
-			draggableItem.Dispose();//удалили старый
-			NormalizedContainer();
-			if(indexWhereToThrow != -1 && !isEmpty()) {//сдвинули
-				ShiftAllFrom(indexWhereToThrow);//что бы всё время не добавлять в конец
+		if (InventoryOverseer._instance.Verify()) {//если этот контейнер тот же от куда взяли
+			if (indexThrow != -1 && !isEmpty()) {//сдвинули
+				if(!slots[indexThrow].IsEmpty())
+					InsertItemTo(bufferItem.Item);//что бы всё время не добавлять в конец
+				else AddItem(bufferItem.Item);
 			}
-			AddItem(bufferItem.Item);
-		}else {
-			draggableItem.Dispose();//удаляется тот который взяли из одного контэйнера и положили в другой или выбросили
 		}
 
 		InventoryOverseer._instance.Dispose();//если не освобождать, то удаление старого предмета не будет и произойдёт добавление его в конец
 		bufferItem.Dispose();//освобождаем буффер
 
-		NormalizedContainer();
-
+		indexThrow = -1;
 		isDrag = false;
+
+		HightLightOff();
 	}
 	#endregion
+
+
+	/// <summary>
+	/// Добавление item в items
+	/// </summary>
+	/// <param name="_item"></param>
+	/// <param name="_shift">Если 0 то добавляет за место этого item, если 1 то перед ним.</param>
+	public void InsertItemTo( Item _item, int _shift = 1 ) {
+
+		List<Item> newitems = HelpFunctions.GetCopy<Item>(items);
+
+		newitems.Insert(indexThrow + _shift, _item);
+
+		DisposeAll();
+		AddItems(newitems);
+
+		NormalizedContainerBySlots();
+	}
 
 
 	public bool isFull() {
@@ -241,21 +281,15 @@ public class Container : MonoBehaviour, IAllEvents {
 			slots[i].SetActiveLeftHover(false);
 		}
 	}
-
-	private void ShiftAllFrom(int _index) {//сдвиг всех предметов от индекса на 1
-		_index++;
-		DisposeContainer();
-		for(int i = 0; i < items.Count; i++) {
-			for(int j = 0; j < slots.Count; j++) {
-				if(j == _index) continue;
-				if(slots[j].IsEmpty()) {
-					slots[j].currentItem.Item = items[i];
-					break;
-				}
-			}
-		}
+	protected void SetCanvasGroup( CanvasGroup _canvasGroup, float _a, bool _raycast ) {
+		_canvasGroup.alpha = _a;//альфа
+		_canvasGroup.blocksRaycasts = _raycast;//выключаем рэйкаст чтобы можно было выполнить onDrop эвент
 	}
-	protected void NormalizedContainer() {//делает предметы слотов попорядку слева направо сверху вниз
+
+	/// <summary>
+	/// делает предметы слотов попорядку слева направо сверху вниз
+	/// </summary>
+	protected void NormalizedContainerBySlots() {
 		List<Item> currentItems = new List<Item>();
 		for(int i = 0; i < slots.Count; i++) {
 			if(!slots[i].IsEmpty()) {
@@ -267,11 +301,12 @@ public class Container : MonoBehaviour, IAllEvents {
 			AddItem(item);
 		}
 	}
-	protected void SetCanvasGroup(CanvasGroup _canvasGroup, float _a, bool _raycast) {
-		_canvasGroup.alpha = _a;//альфа
-		_canvasGroup.blocksRaycasts = _raycast;//выключаем рэйкаст чтобы можно было выполнить onDrop эвент
+
+	protected void NormalizedContainerByItems() {
+
 	}
 
+	
 	public void OnPointerDown(PointerEventData eventData) {
 
 	}
@@ -286,6 +321,8 @@ public class Container : MonoBehaviour, IAllEvents {
 	}
 	public virtual void OnPointerExit(PointerEventData eventData) {
 		slots[0].SetActiveLeftHover(false);
+
+		indexThrow = -1;
 	}
 
 	public virtual void OnBeginDrag(PointerEventData eventData) {

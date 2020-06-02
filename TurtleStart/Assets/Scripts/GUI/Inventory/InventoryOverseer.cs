@@ -24,7 +24,7 @@ public class InventoryOverseer : MonoBehaviour{
 		_instance = this;
 	}
 	private void Update() {
-		Debug.Log(programmingContainers.Count);
+
 	}
 
 	public bool Verify() {
@@ -50,6 +50,25 @@ public class InventoryOverseer : MonoBehaviour{
 	public bool VerumFrom(Container _container) {//если контэйнер который я хочу положить
 		if(_container == from) return true;
 		return false;
+	}
+
+	public void DeleteContainer(Container _conatiner) {
+		if (allContainers.Contains(_conatiner)) {
+			allContainers.Remove(_conatiner);
+			return;
+		}
+		if (programmingContainers.Contains(_conatiner)) {
+			programmingContainers.Remove(_conatiner);
+			return;
+		}
+		if (refContainers.Contains(_conatiner)) {
+			refContainers.Remove(_conatiner);
+			return;
+		}
+		if (storageContainers.Contains(_conatiner)) {
+			storageContainers.Remove(_conatiner);
+			return;
+		}
 	}
 
 	public void Dispose() {

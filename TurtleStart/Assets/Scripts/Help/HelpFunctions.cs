@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class HelpFunctions : MonoBehaviour {
 
+	public static List<T> GetCopy<T>( List<T> _original ) {
+		List<T> copy = new List<T>();
+		for (int i = 0; i < _original.Count; i++) {
+			copy.Add(_original[i]);
+		}
+		return copy;
+	}
+
 	public static int[,] Rotate(int[,] m) {
 		var result = new int[m.GetLength(1), m.GetLength(0)];
 
@@ -15,7 +23,7 @@ public class HelpFunctions : MonoBehaviour {
 	}
 
 	public static void DestroyChilds(Transform _transform) {
-		var trashArray = new GameObject[_transform.childCount];
+		GameObject []trashArray = new GameObject[_transform.childCount];
 
 		for(int i = 0; i < trashArray.Length; i++) {
 			trashArray[i] = _transform.GetChild(i).gameObject;
@@ -24,6 +32,9 @@ public class HelpFunctions : MonoBehaviour {
 		for(int i = 0; i < trashArray.Length; i++) {
 			DestroyImmediate(trashArray[i]);
 		}
+	}
+	public static void DestroyObject(GameObject _obj) {
+		DestroyImmediate(_obj);
 	}
 
 	public static Transform[] TakeAllChilds(Transform _transform) {
