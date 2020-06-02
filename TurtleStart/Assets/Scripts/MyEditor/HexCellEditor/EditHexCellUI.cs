@@ -11,6 +11,10 @@ using UnityEditor;
 [CustomEditor(typeof(EditHexCellEditor))]
 public class EditHexCellUI : Editor {
 	
+	/// <summary>
+	/// Выделение памяти страдает
+	/// </summary>
+
 	EditHexCellEditor myScript;
 	SerializedObject obj;
 
@@ -54,6 +58,8 @@ public class EditHexCellUI : Editor {
 	private void RefreshParams( Vector2Int start, Vector2Int end ) {
 		startPos.vector2IntValue = start;
 		endPos.vector2IntValue = end;
+
+		//Selection.objects;
 	}
 	public override void OnInspectorGUI() {
 		selectedObjs = GetSelectedCells();
@@ -66,11 +72,19 @@ public class EditHexCellUI : Editor {
 
 		RefreshParams(MapConstants.startPosition, MapConstants.endPosition);
 		#region Select
+		if (GUILayout.Button("null")) {
+			GameObject[] cells = new GameObject[1];
+			Selection.objects = cells;
+		}
 		GUILayout.Label("Start Position on " + startPos.vector2IntValue.ToString());
 		if(GUILayout.Button("Select")) {
-			GameObject[] cells = new GameObject[1];
-			cells[0] = MapConstants.startCell.gameObject;
-			Selection.objects = cells;
+			try {
+				GameObject[] cells = new GameObject[1];
+				cells[0] = MapConstants.startCell.gameObject;
+				Selection.objects = cells;
+			} catch (Exception e) {
+
+			}
 		}
 		GUILayout.EndHorizontal();
 		GUILayout.BeginHorizontal();

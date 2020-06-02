@@ -16,7 +16,7 @@ public class MapConstants {
 
 	public static Transform hexGrid { 
 		get { 
-			return GameObject.FindObjectOfType<HexGrid>().transform;
+			return GameObject.FindObjectOfType<HexGrid>().map;
 		}
 	}
 	public static Transform prefab {

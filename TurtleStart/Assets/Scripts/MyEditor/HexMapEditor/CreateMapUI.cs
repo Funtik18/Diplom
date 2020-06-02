@@ -37,9 +37,11 @@ public class CreateMapUI : Editor {
 	private void RefreshConstatnts() {
 		//если произошло обновление высоты и ширины
 		if (MapConstants.height != height.intValue || MapConstants.width != width.intValue) {
+			//HexConstructor.IncreaseSurface(height.intValue, width.intValue);
 			MapConstants.height = height.intValue;
 			MapConstants.width = width.intValue;
 
+			
 			HexConstructor.CreateSurface(height.intValue, width.intValue);
 		}
 	}
