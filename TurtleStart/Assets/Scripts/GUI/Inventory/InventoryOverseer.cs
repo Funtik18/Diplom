@@ -26,7 +26,10 @@ public class InventoryOverseer : MonoBehaviour{
 	private void Update() {
 
 	}
-
+	/// <summary>
+	/// IF from == to
+	/// </summary>
+	/// <returns>true or false</returns>
 	public bool Verify() {
 		return from == to ? true : false;
 	}

@@ -11,16 +11,11 @@ public class ProgrammingContainer : Container {
 		base.Start();
 		InventoryOverseer._instance.programmingContainers.Add(this);
 	}
-	private void Update() {
-
-	}
 	protected override void PointerEnter( BasicItem _item, PointerEventData _eventData ) {
 		if (isDrag && !bufferItem.IsEmpty()) {//если буфер не пуст
 			if (!isFull() || InventoryOverseer._instance.Verify()) {//если контэйнер не полон или это тот контейнер откуда взяли
 				hoverSlot = _item.GetComponentInParent<BasicSlot>();
 				indexThrow = slots.FindIndex(x => x == hoverSlot);
-
-				//print(indexWhereToThrow);
 
 				if (hoverSlot.IsEmpty() == false) {//если слот на который навели не пуст	
 												   //когда драгаешь сам на себя переходит в конец контэйнера
