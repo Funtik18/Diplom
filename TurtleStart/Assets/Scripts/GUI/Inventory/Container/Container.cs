@@ -228,11 +228,6 @@ public class Container : MonoBehaviour, IAllEvents {
 				if(!slots[indexThrow].IsEmpty())
 					InsertItemTo(bufferItem.Item);//что бы всё время не добавлять в конец
 				else AddItem(bufferItem.Item);
-			}else if(indexThrow == -1) {
-				
-				
-				print(indexThrow);
-				//InsertItemTo(bufferItem.Item);
 			}
 		}
 

@@ -27,6 +27,12 @@ public class WindowManager : MonoBehaviour{
 		FadeBackground(true);
 		FadePreference(true);
 	}
+	public void HidePreferenceWindow() {
+		FadeWin(false);
+
+		FadeBackground(false);
+		FadePreference(false);
+	}
 	private void FadeBackground(bool _triger) {
 		UIFader background = root.GetComponent<UIFader>();
 		background.OnOffRayCast(_triger);

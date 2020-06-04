@@ -15,12 +15,14 @@ public class CloseButton : BasicButton {
         main.onClick.AddListener(() => OpenCloseClick());
     }
     private void OpenCloseClick() {
-        UIFader fader = closePanel.GetComponent<UIFader>();
+        /*UIFader fader = closePanel.GetComponent<UIFader>();
         fader.FadeOut();
 
 
         UIFader background = closePanel.parent.GetComponent<UIFader>();
         background.FadeOut();
-        background.OnOffRayCast(false);
+        background.OnOffRayCast(false);*/
+
+        WindowManager._instance.HidePreferenceWindow();
     }
 }
