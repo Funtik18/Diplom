@@ -187,6 +187,9 @@ public class Container : MonoBehaviour, IAllEvents {
 
 		NormalizedContainerBySlots();
 
+		BasicSlot slot = _item.GetComponentInParent<BasicSlot>();
+		indexThrow = slots.FindIndex(x => x == slot);
+		slots[indexThrow].SetActiveRightHover(true);
 
 		InventoryOverseer._instance.from = this;//от куда взял
 
@@ -217,7 +220,7 @@ public class Container : MonoBehaviour, IAllEvents {
 		HightLightOff();
 	}
 	protected virtual void EndDrag(BasicItem _item, PointerEventData _eventData) {
-		if(!iCanDrag) return;
+		if (!iCanDrag) return;
 		InventoryOverseer._instance.to = this;//куда положил
 		
 		if (InventoryOverseer._instance.Verify()) {//если этот контейнер тот же от куда взяли
@@ -225,6 +228,11 @@ public class Container : MonoBehaviour, IAllEvents {
 				if(!slots[indexThrow].IsEmpty())
 					InsertItemTo(bufferItem.Item);//что бы всё время не добавлять в конец
 				else AddItem(bufferItem.Item);
+			}else if(indexThrow == -1) {
+				
+				
+				print(indexThrow);
+				//InsertItemTo(bufferItem.Item);
 			}
 		}
 
@@ -331,6 +339,6 @@ public class Container : MonoBehaviour, IAllEvents {
 	public virtual void OnDrag(PointerEventData eventData) {
 	}
 	public virtual void OnEndDrag(PointerEventData eventData) {
-
+		
 	}
 }
