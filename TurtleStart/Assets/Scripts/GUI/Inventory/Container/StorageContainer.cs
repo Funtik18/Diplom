@@ -13,6 +13,7 @@ public class StorageContainer : Container {
 	}
 
 	protected override void onBeginDrag( BasicItem _item, PointerEventData _eventData ) {
+		if (Interpreter._instance.isReadAssignments) return;
 		draggableItem = _item;
 		//я не могу перетаскивать объекты которых нету
 		iCanDrag = !draggableItem.IsEmpty();
@@ -29,6 +30,7 @@ public class StorageContainer : Container {
 	}
 
 	protected override void EndDrag( BasicItem _item, PointerEventData _eventData ) {
+		if (Interpreter._instance.isReadAssignments) return;
 		if (!iCanDrag) return;
 
 		SetCanvasGroup(_item.canvasGroup, 1f, true);
@@ -43,19 +45,39 @@ public class StorageContainer : Container {
 	}
 
 	protected override void OnPointerClick( BasicItem _item, PointerEventData _eventData ) {
-		if (!_item.IsEmpty() && WhithClicks) {//если слот не пуст то добавить предмет в контэйнер there
-			int counter = 0;
-			for (int i = 0; i < InventoryOverseer._instance.programmingContainers.Count; i++) {//вот она самая тупая вещь в моей жизни
-				Container temp = InventoryOverseer._instance.programmingContainers[i];
-				if (!temp.isFull()) {
-					InventoryOverseer._instance.put = temp;
-					break;
-				} else {
-					counter++;
-				}
+		if (Interpreter._instance.isReadAssignments) return;
+		if (!_item.IsEmpty() && WhithClicks) {
+			if(InventoryOverseer._instance.put == null) {
+				InventoryOverseer._instance.put = InventoryOverseer._instance.programmingContainers[1];
 			}
-			if (counter != InventoryOverseer._instance.programmingContainers.Count && InventoryOverseer._instance.put!=null)
-				InventoryOverseer._instance.put.AddItem(_item.Item);
+			if (InventoryOverseer._instance.put.gameObject.activeSelf) {
+				int counter = 0;
+				for (int i = 0; i < InventoryOverseer._instance.programmingContainers.Count; i++) {
+					Container temp = InventoryOverseer._instance.programmingContainers[i];
+					if (!temp.isFull() && temp.gameObject.activeSelf) {
+						InventoryOverseer._instance.put = temp;
+						break;
+					} else {
+						counter++;
+					}
+				}
+				if (counter != InventoryOverseer._instance.programmingContainers.Count)
+					InventoryOverseer._instance.put.AddItem(_item.Item);
+			} else {
+				int counter = 0;
+				for (int i = 0; i < InventoryOverseer._instance.programmingContainers.Count; i++) {
+					Container temp = InventoryOverseer._instance.programmingContainers[i];
+					if (!temp.isFull() && temp.gameObject.activeSelf) {
+						InventoryOverseer._instance.put = temp;
+						break;
+					} else {
+						counter++;
+					}
+				}
+				if (counter != InventoryOverseer._instance.programmingContainers.Count)
+					InventoryOverseer._instance.put.AddItem(_item.Item);
+				//OpenCloseFunction._instance.DeleteDisabledFunctions();
+			}
 		}
 	}
 }

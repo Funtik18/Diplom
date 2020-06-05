@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Interpreter : MonoBehaviour {
 
@@ -28,8 +29,7 @@ public class Interpreter : MonoBehaviour {
 	}
 	void UndestandingProgram(List<Item> _functs, List<BasicSlot> _slots, int _level) {
 		if(_level > deepRecursion) {
-			Debug.Log("Error");
-			//AddError("StackOverflow so many calls");
+			Debug.LogError("Error");//"StackOverflow so many calls"
 			return;
 		}
 		for(int i = 0; i < _functs.Count; i++) {
@@ -41,12 +41,8 @@ public class Interpreter : MonoBehaviour {
 				List<BasicSlot> innerSlots = refItem.container.GetSlots();
 
 				UndestandingProgram(innerItems, innerSlots, _level +1);
-
 			}
-			
 			items.Add(_functs[i]);	
-			
-
 		}
 	}
 
@@ -63,7 +59,7 @@ public class Interpreter : MonoBehaviour {
 
 		UndestandingProgram(mainContainer.GetItems(), mainContainer.GetSlots(), 0);
 
-		if(readAssignments == null)
+		if (readAssignments == null)
 			readAssignments = this.StartCoroutine(ReadAssignments());
 	}
 	IEnumerator ReadAssignments() {
@@ -86,7 +82,7 @@ public class Interpreter : MonoBehaviour {
 		}
 		readAssignments = null;
 		Restart();
-		
+
 	}
 	public void RestartReadAssignments() {
 		StopReadAssignments();

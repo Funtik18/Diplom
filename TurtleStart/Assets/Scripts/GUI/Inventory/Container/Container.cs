@@ -277,6 +277,9 @@ public class Container : MonoBehaviour, IAllEvents {
 		return true;
 	}
 
+	public void EnableContainer(bool triger) {
+		SetCanvasGroup(GetComponent<CanvasGroup>(),1f, triger);
+	}
 
 	protected void HightLightOff() {
 		for(int i = 0; i < slots.Count; i++) {//убираем подсветки у всех слотовs
@@ -286,8 +289,12 @@ public class Container : MonoBehaviour, IAllEvents {
 	}
 	protected void SetCanvasGroup( CanvasGroup _canvasGroup, float _a, bool _raycast ) {
 		_canvasGroup.alpha = _a;//альфа
+		_canvasGroup.interactable = _raycast; ;
 		_canvasGroup.blocksRaycasts = _raycast;//выключаем рэйкаст чтобы можно было выполнить onDrop эвент
 	}
+
+
+
 
 	/// <summary>
 	/// делает предметы слотов попорядку слева направо сверху вниз

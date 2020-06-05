@@ -2871,6 +2871,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1362120302}
   m_Mesh: {fileID: 2534964839176971238, guid: 2474db6c7c8a2f94cb6606516fdd364b, type: 3}
+--- !u!1 &1427176362 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6287278929158293257, guid: 0f2d983f5fd5d3043a5d7fc61e08251a,
+    type: 3}
+  m_PrefabInstance: {fileID: 8992406727299044121}
+  m_PrefabAsset: {fileID: 0}
+--- !u!225 &1427176369
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427176362}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1448880759
 GameObject:
   m_ObjectHideFlags: 0

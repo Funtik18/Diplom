@@ -18,17 +18,18 @@ public class Program : MonoBehaviour{
 		});
 		if(closeBtn)
 		closeBtn.onClick.AddListener(delegate {
-			body.DisposeAll();
-			Disable(false);
-
 			InventoryOverseer._instance.DeleteContainer(head);
 			InventoryOverseer._instance.DeleteContainer(body);
 
-			OpenCloseFunction._instance.DeleteDisabledFunctions();
+			Disable(false);
+			body.DisposeAll();
+			
+			//OpenCloseFunction._instance.DeleteDisabledFunctions();
 		});
 	}
 
 	public void Disable(bool _triger) {
+		body.gameObject.SetActive(_triger);
 		gameObject.SetActive(_triger);
 	}
 }
