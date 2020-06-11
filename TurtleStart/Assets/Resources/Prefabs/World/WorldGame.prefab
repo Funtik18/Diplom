@@ -108,7 +108,7 @@ MonoBehaviour:
   world: {fileID: 8082546547989060817}
   map: {fileID: 748948360151739766}
   stuff: {fileID: 4140047405209100338}
-  playerPrefab: {fileID: 3781776781681192631, guid: 8f17b8a1c5aa2664bb8916573a9b7586,
+  playerPrefab: {fileID: 327978716837700239, guid: 01834e9724243f644af3a5efa565f80a,
     type: 3}
   cellPrefab: {fileID: 8873901014643044114, guid: dddb98953bb0aba42a721738e8b003e3,
     type: 3}

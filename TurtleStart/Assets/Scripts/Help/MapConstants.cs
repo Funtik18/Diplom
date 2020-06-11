@@ -32,7 +32,7 @@ public class MapConstants {
 
 	public static Vector2Int sizeMainProgram = new Vector2Int(1,5);
 	public static List<Item> startItems = new List<Item>();
-	public static List<Program> startPrograms = new List<Program>();
+	public static List<string> startPrograms = new List<string>();
 	public static int[] blockedIndexes;
 	#endregion
 }

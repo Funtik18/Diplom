@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 59019233}
   - component: {fileID: 59019232}
   - component: {fileID: 59019231}
+  - component: {fileID: 59019234}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -204,6 +205,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 40, y: 8, z: 0}
+--- !u!114 &59019234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59019230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa841903fdcd00b43b680cdd979abbcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 842806299}
+  offset: {x: 60, y: 10, z: -150}
+  sensitivity: 3
+  limit: 80
+  zoom: 1
+  zoomMax: 200
+  zoomMin: 150
 --- !u!1 &170713434
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,6 +823,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 740447656}
   m_CullTransparentMesh: 0
+--- !u!4 &842806299 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 748948360151739766, guid: 6dba1288a2e6256489fc72895178572f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5285258021542643437}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1206843480
 GameObject:
   m_ObjectHideFlags: 0
@@ -2326,11 +2352,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: WorldGame
-      objectReference: {fileID: 0}
-    - target: {fileID: 7664390721320229585, guid: 6dba1288a2e6256489fc72895178572f,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8082546547989060817, guid: 6dba1288a2e6256489fc72895178572f,
         type: 3}

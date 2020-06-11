@@ -34,7 +34,7 @@ public class SaveLoadManager : MonoBehaviour {
 			temp += String.Join(",", MapConstants.startItems.Select(n => n.name)) + '\n';//стартовые предметы
 		else temp += "-" + '\n';
 		if (!errors.Contains("100"))
-			temp += String.Join(",", MapConstants.startPrograms.Select(n => n.name));//стартовые функции
+			temp += String.Join(",", MapConstants.startPrograms.Select(n => n));//стартовые функции
 		else temp += "-" + '\n';
 		return temp;
 	}
@@ -134,12 +134,11 @@ public class SaveLoadManager : MonoBehaviour {
 		}
 		if (startPrograms.Length != 0) {
 			if (startPrograms[0] != "-") {
-				List<Program> programs = new List<Program>();
+				List<string> programs = new List<string>();
 
 				for (int i = 0; i < startPrograms.Length; i++) {
-					programs.Add(LoadProgramByName(startPrograms[i]));
+					MapConstants.startPrograms.Add(startPrograms[i]);
 				}
-				MapConstants.startPrograms = programs;
 			}
 		}
 		
@@ -200,11 +199,11 @@ public class SaveLoadManager : MonoBehaviour {
 		if (MapConstants.startPrograms.Count != 0) {
 			Transform parent = mainFunction.parent.parent;//куда создавать програмы
 			for (int i = 0; i < MapConstants.startPrograms.Count; i++) {
-				GameObject p = LoadProgramByName(MapConstants.startPrograms[i].name).gameObject;
-				Transform program = Instantiate(p).transform;
-				program.SetParent(parent, false);
-				program.localPosition = Vector3.one;
-				program.localScale = Vector3.one;
+				print(MapConstants.startPrograms[i]);
+				Program p =Instantiate<Program>(LoadProgramByName(MapConstants.startPrograms[i]), parent);
+				//Transform program = Instantiate(p).transform;
+				p.transform.localPosition = Vector3.one;
+				p.transform.localScale = Vector3.one;
 			}
 		}
 		#endregion

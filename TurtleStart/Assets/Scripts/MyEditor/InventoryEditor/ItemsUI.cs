@@ -48,7 +48,7 @@ public class ItemsUI : Editor {
 			MapConstants.startPrograms.Clear();
 			for (int i = 0; i < temp2.Count; i++) {
 				if (temp2[i] != null) {
-					MapConstants.startPrograms.Add(temp2[i]);
+					MapConstants.startPrograms.Add(temp2[i].name);
 				}
 			}
 
